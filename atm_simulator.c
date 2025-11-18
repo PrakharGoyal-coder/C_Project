@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <string.h>
-
+struct account{
+    int pin;
+    float balance;
+};
 void check_Balance(float balance);
 float deposit_Money(float balance);
 float withdraw_Money(float balance);
