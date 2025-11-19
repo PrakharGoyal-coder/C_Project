@@ -1,150 +1,135 @@
 #include <stdio.h>
-#include <string.h>
-struct account{
+
+struct account 
+{
     int pin;
     float balance;
 };
-void check_Balance(float balance);
-float deposit_Money(float balance);
-float withdraw_Money(float balance);
-int change_PIN(int pin);
 
-int main() 
+
+void checkBalance(struct account acc);
+struct account depositMoney(struct account acc);
+struct account withdrawMoney(struct account acc);
+struct account changePIN(struct account acc);
+
+int main()
 {
-    int pin = 1234,enteredPin,choice;
-    float balance=10000.0; // Last balance
-    int attempts=0;
-    int max_attempts=3;
+    struct account user;
+    user.pin = 1234;
+    user.balance = 10000.0;
+    int enteredPin, choice;
+    int attempts = 0;
 
-    printf("Welcome to State Bank ATM\n");
+    printf("\n- Welcome to State Bank ATM -\n");
 
-    // PIN verification
-    while (1)
-    {
-        printf("Enter your 4-digit PIN: \n");
-        scanf("%d",&enteredPin);
+    while (1) {
+        printf("Enter your 4 digit pin: ");
+        scanf("%d", &enteredPin);
 
-        if(enteredPin==pin) 
+        if (enteredPin==user.pin) 
         {
-            printf("Login successful");
+            printf("Login successful.\n");
             break;
-        }
-        else 
+        } else
         {
             attempts++;
-            printf("Incorrect PIN. Attempts left:%d\n",max_attempts-attempts);
+            printf("Wrong pin. Attempts left: %d\n",3-attempts);
         }
 
-        if(attempts>=max_attempts) 
+        if (attempts==3)
         {
-            printf("Too many wrong attempts!Your account has been locked.\n");
+            printf("\nYou tried wrong pin too many times.\n");
+            printf("Account locked for safety.\n");
             return 0;
         }
     }
 
-    
+    // menu for user
     do {
-        printf("ATM Menu\n");
+        printf("\n--MENU --\n");
         printf("1.Check Balance\n");
         printf("2.Deposit Money\n");
         printf("3.Withdraw Money\n");
         printf("4.Change PIN\n");
-        printf("5.Mini Statement\n");  ////LEFT TO DO
-        printf("6.Exit\n");
-        
-        printf("Enter your choice: ");
-        scanf("%d",&choice);
+        printf("5. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
 
-        switch(choice) 
+        switch (choice) 
         {
-            case 1:    check_Balance(balance);
-                        break;
+            case 1:checkBalance(user); break;
 
-            case 2:    balance=deposit_Money(balance);
-                        break;
+            case 2:  user=depositMoney(user); break;
 
-            case 3:     balance=withdraw_Money(balance);
-                         break;
+            case 3:  user=withdrawMoney(user); break;
 
-            case 4:      pin=change_PIN(pin);
-                         break;
+            case 4:  user=changePIN(user); break;
 
-            case 6:     printf("\nThank you for using our ATM.....\n");
-                         break;
+            case 5: printf("\nThanks for using the ATM.\n");break;
 
-            default:
-                printf("Invalid choice...Please try again.\n");
+            default: printf("Invalid option. Try again.\n");
         }
 
-    } while(choice!=6);
-
+    } while (choice!=5);
     return 0;
 }
 
-void check_Balance(float balance)
+void checkBalance(struct account acc)
 {
-    printf("Your current balance is: Rs.%.2f\n",balance);
+    printf("\nYour balance: Rs %.2f\n", acc.balance);
 }
 
-float deposit_Money(float balance) 
+struct account depositMoney(struct account acc)
 {
-    float deposit;
-    printf("Enter amount to deposit: Rs.");
-    scanf("%f",&deposit);
+    float amt;
+    printf("Enter amount to deposit: ");
+    scanf("%f", &amt);
 
-    if (deposit<=0) 
-    {
+    if (amt <= 0) {
         printf("Invalid amount.\n");
-    } 
-    else 
-    {
-         balance+=deposit;
-        printf("Rs.%.2f deposited successfully\n", deposit);
-    }
-    return balance;
-}
-
-float withdraw_Money(float balance)
- {   
-    printf("\n");
-    float withdraw;
-    printf("Enter amount to withdraw: Rs");
-    scanf("%f", &withdraw);
-
-    if(withdraw<=0) 
-    {
-        printf("Invalid amount.\n");
-    } 
-    else if(withdraw>balance) 
-    {
-        printf("Insufficient balance.\n");
-    } 
-    else 
-    {
-        balance=balance-withdraw;
-        printf("Please collect your cash: Rs.%.2f\n", withdraw);
+    } else {
+        acc.balance+=amt;
+        printf("Deposited Rs %.2f\n", amt);
     }
 
-    return balance;
+    return acc;
 }
 
-int change_PIN(int pin) 
+struct account withdrawMoney(struct account acc)
 {
-    int newPin, confirmPin;
+    float amt;
+    printf("Enter amount to withdraw: ");
+    scanf("%f", &amt);
 
-    printf("\nEnter new 4-digit PIN: ");
+    if (amt<=0)
+    {
+        printf("Invalid amount.\n");
+    } else if (amt > acc.balance) {
+        printf("Not enough balance.\n");
+    } else {
+        acc.balance -= amt;
+        printf("Please collect Rs %.2f\n", amt);
+    }
+
+    return acc;
+}
+
+struct account changePIN(struct account acc)
+{
+    int newPin, again;
+
+    printf("Enter new PIN: ");
     scanf("%d", &newPin);
-    printf("Confirm new PIN: ");
-    scanf("%d", &confirmPin);
 
-    if(newPin==confirmPin && newPin>=1000 && newPin<=9999) 
-    {
-        pin=newPin;
-        printf("PIN changed successfully\n");
+    printf("Re-enter new PIN: ");
+    scanf("%d", &again);
+
+    if (newPin == again && newPin > 999 && newPin <= 9999) {
+        acc.pin = newPin;
+        printf("PIN changed.\n");
+    } else {
+        printf("PIN not changed. Either mismatch or not 4 digit.\n");
     }
-     else 
-    {
-        printf("PINs do not match or invalid format.\n");
-    }
-    return pin;
+
+    return acc;
 }
