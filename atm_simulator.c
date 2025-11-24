@@ -135,11 +135,26 @@ struct account depositMoney(struct account acc)
     printf("Enter amount to deposit: ");
     scanf("%f", &amt);
 
-    if (amt <= 0) {
+    if (amt <= 0)
+    {
         printf("Invalid amount.\n");
-    } else {
+    } 
+    else 
+    {
         acc.balance += amt;
-        printf("Deposited Rs %.2f\n", amt);
+        printf("Deposited Rs %.2f\n", amt);   
+        while (getchar() != '\n');
+        char ch;
+        printf("Do you want a receipt?(y/n):");
+        scanf(" %c",&ch);  
+        if(ch=='y'|| ch=='Y')
+        {
+            printf("\n----Receipt-----\n");
+            printf("Transaction :deposited\n");
+            printf("Amount: Rs %.2f\n", amt);
+            printf("New balance:Rs %.2f\n",acc.balance);
+    
+        }
     }
     return acc;
 }
@@ -149,17 +164,32 @@ struct account withdrawMoney(struct account acc)
     float amt;
     printf("Enter amount to withdraw: ");
     scanf("%f", &amt);
-
-    if (amt <= 0) {
+    while (getchar() != '\n');
+    if (amt<=0) 
+    {
         printf("Invalid amount.\n");
     } 
-    else if (amt > acc.balance) {
+    else if(amt>acc.balance) 
+    {
         printf("Not enough balance.\n");
     } 
-    else {
-        acc.balance -= amt;
+    else
+     {
+        acc.balance-=amt;
         printf("Please collect Rs %.2f\n", amt);
+         char ch;
+        printf("Do you want a receipt?(y/n):");
+        scanf(" %c",&ch);  
+        if(ch=='y'|| ch=='Y')
+        {
+            printf("\n----Receipt-----\n");
+            printf("Transaction :withdrawal\n");
+            printf("Amount:Rs %.2f\n",amt);
+            printf("Remaining Balance: Rs %.2f\n",acc.balance); 
+    
+        }
     }
+   
     return acc;
 }
 
