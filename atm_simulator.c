@@ -12,6 +12,9 @@ void checkBalance(struct account acc);
 struct account depositMoney(struct account acc);
 struct account withdrawMoney(struct account acc);
 struct account changePIN(struct account acc);
+void addHistory(char *entry);
+void showHistory();
+
 
 int main()
 {
@@ -53,6 +56,7 @@ int main()
         printf("3. Withdraw Money\n");
         printf("4. Change PIN\n");
         printf("5. Exit\n");
+         printf("6. Transaction History\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
 
@@ -79,6 +83,10 @@ int main()
             case 5:
                 printf("\nThank you for using the ATM.\n");
                 break;
+            case 6:
+                    showHistory();
+                     break;
+
 
             default:
                 printf("Invalid option. Try again.\n");
@@ -155,6 +163,11 @@ struct account depositMoney(struct account acc)
             printf("New balance:Rs %.2f\n",acc.balance);
     
         }
+        char txt[200];
+      sprintf(txt, "Deposited: Rs %.2f | Balance: Rs %.2f", amt, acc.balance);
+
+      addHistory(txt);
+
     }
     return acc;
 }
@@ -188,6 +201,10 @@ struct account withdrawMoney(struct account acc)
             printf("Remaining Balance: Rs %.2f\n",acc.balance); 
     
         }
+        char txt[200];
+        sprintf(txt, "Withdrawn: Rs %.2f | Balance: Rs %.2f", amt, acc.balance);
+        addHistory(txt);
+
     }
    
     return acc;
@@ -209,5 +226,32 @@ struct account changePIN(struct account acc)
         printf("PIN not changed. Either mismatch or not 4 digits.\n");
     }
 
+
     return acc;
+}
+    void addHistory(char *entry)
+   {
+    FILE *fp = fopen("history.txt", "a");
+    if (fp == NULL) {
+        printf("Error writing to history.\n");
+        return;
+    }
+    fprintf(fp, "%s\n", entry);
+    fclose(fp);
+    }
+void showHistory()
+{
+    FILE *fp = fopen("history.txt", "r");
+    char line[200];
+
+    if (fp == NULL) {
+        printf("\nNo transactions recorded yet.\n");
+        return;
+    }
+
+    printf("\n--- MINI TRANSACTION HISTORY ---\n");
+    while (fgets(line, sizeof(line), fp) != NULL) {
+        printf("%s", line);
+    }
+    fclose(fp);
 }
