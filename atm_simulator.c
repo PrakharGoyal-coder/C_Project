@@ -1,6 +1,9 @@
 #include <stdio.h>
+#include<string.h>
 
-struct account {
+struct account 
+{
+    char name[50];
     int pin;
     float balance;
 };
@@ -14,6 +17,7 @@ struct account withdrawMoney(struct account acc);
 struct account changePIN(struct account acc);
 void addHistory(char *entry);
 void showHistory();
+struct account changeName(struct account acc);
 
 
 int main()
@@ -33,6 +37,7 @@ int main()
 
         if (enteredPin==user.pin) 
         {
+            printf("Welcome, %s\n",user.name);
             printf("Login successful.\n");
             break;
         } 
@@ -52,11 +57,12 @@ int main()
     do {
         printf("\n-- MENU --\n");
         printf("1.Check Balance\n");
-        printf("2. Deposit Money\n");
-        printf("3. Withdraw Money\n");
-        printf("4. Change PIN\n");
-        printf("5. Exit\n");
-         printf("6. Transaction History\n");
+        printf("2.Deposit Money\n");
+        printf("3.Withdraw Money\n");
+        printf("4.Change PIN\n");
+        printf("5.Exit\n");
+        printf("6.Transaction History\n");
+        printf("7.Change Account Holder Name\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
 
@@ -86,6 +92,10 @@ int main()
             case 6:
                     showHistory();
                      break;
+            case 7:
+                    user=changeName(user);
+                    saveToFile(user);
+                    break; 
 
 
             default:
@@ -107,7 +117,7 @@ void saveToFile(struct account acc)
         return;
     }
 
-    fprintf(fp, "%d\n%.2f\n", acc.pin, acc.balance);
+    fprintf(fp, "%s\n%d\n%.2f\n",acc.name,acc.pin,acc.balance);
     fclose(fp);
 }
 
@@ -117,18 +127,22 @@ struct account loadFromFile()
     struct account acc;
     FILE *fp = fopen("account.txt", "r");
 
-    if (fp == NULL) {
-
-        acc.pin = 1234;
-        acc.balance = 10000.0;
+    if (fp == NULL) 
+    {
+        strcpy(acc.name,"Default User");
+        acc.pin=1234;
+        acc.balance=10000.0;
         saveToFile(acc);
         return acc;
     }
+    fgets(acc.name,sizeof(acc.name),fp);
+    acc.name[strcspn(acc.name,"\n")]='\0';
 
     fscanf(fp, "%d %f", &acc.pin, &acc.balance);
     fclose(fp);
     return acc;
 }
+
 
 
 // NORMAL ATM FUNCTIONS
@@ -254,4 +268,14 @@ void showHistory()
         printf("%s", line);
     }
     fclose(fp);
+}
+
+struct account changeName(struct account acc)
+{
+    printf("Enter new Account Holder name:");
+    getchar();
+    fgets(acc.name,sizeof(acc.name),stdin);
+    acc.name[strcspn(acc.name,"\n")]='\0';
+    printf("Acc Holder name updated successfully\n");
+    return acc;
 }
