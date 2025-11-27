@@ -18,6 +18,7 @@ struct account changePIN(struct account acc);
 void addHistory(char *entry);
 void showHistory();
 struct account changeName(struct account acc);
+void resetAccount();
 
 
 int main()
@@ -63,6 +64,7 @@ int main()
         printf("5.Exit\n");
         printf("6.Transaction History\n");
         printf("7.Change Account Holder Name\n");
+        printf("8.Reset Account\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
 
@@ -96,6 +98,9 @@ int main()
                     user=changeName(user);
                     saveToFile(user);
                     break; 
+
+            case 8:  resetAccount();
+                    break;
 
 
             default:
@@ -278,4 +283,11 @@ struct account changeName(struct account acc)
     acc.name[strcspn(acc.name,"\n")]='\0';
     printf("Acc Holder name updated successfully\n");
     return acc;
+}
+void resetAccount() 
+{
+    FILE *fp=fopen("account.txt","w");
+    fprintf(fp,"Default User\n1234\n10000.00\n");
+    fclose(fp);
+    printf("Account reset successfully.\n");
 }
