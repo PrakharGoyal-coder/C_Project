@@ -1,1 +1,3 @@
 Deposited: Rs 500.00 | Balance: Rs 10500.00
+Deposited: Rs 500.00 | Balance: Rs 11000.00
+Withdrawn: Rs 1000.00 | Balance: Rs 10000.00

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include<stdlib.h>
 #include<string.h>
 
 struct account 
@@ -6,6 +7,9 @@ struct account
     char name[50];
     int pin;
     float balance;
+    char bankName[50];
+    char branch[50];
+    char type[20];
 };
 
 void saveToFile(struct account acc);
@@ -40,6 +44,13 @@ int main()
         {
             printf("Welcome, %s\n",user.name);
             printf("Login successful.\n");
+            printf("Bank:%s\n",user.bankName);
+            printf("Branch:%s\n",user.branch);
+            printf("Account Type:%s\n",user.type);
+
+            // low balance warning
+            if (user.balance < 1000)
+                printf("\n WARNING:Your balance is very low.Please deposit soon.\n");
             break;
         } 
         else 
@@ -122,7 +133,7 @@ void saveToFile(struct account acc)
         return;
     }
 
-    fprintf(fp, "%s\n%d\n%.2f\n",acc.name,acc.pin,acc.balance);
+    fprintf(fp, "%s\n%d\n%.2f\n%s\n%s\n%s\n",acc.name,acc.pin,acc.balance,acc.bankName,acc.branch,acc.type);
     fclose(fp);
 }
 
@@ -137,6 +148,10 @@ struct account loadFromFile()
         strcpy(acc.name,"Default User");
         acc.pin=1234;
         acc.balance=10000.0;
+
+        strcpy(acc.bankName,"State Bamk of India");
+        strcpy(acc.branch,"Dehradun Main branch");
+        strcpy(acc.type,"savings");
         saveToFile(acc);
         return acc;
     }
@@ -144,6 +159,14 @@ struct account loadFromFile()
     acc.name[strcspn(acc.name,"\n")]='\0';
 
     fscanf(fp, "%d %f", &acc.pin, &acc.balance);
+    fgetc(fp);
+    fgets(acc.bankName, sizeof(acc.bankName), fp);
+    acc.bankName[strcspn(acc.bankName,"\n")]='\0';
+    fgets(acc.branch, sizeof(acc.branch), fp);
+    acc.branch[strcspn(acc.branch,"\n")]='\0';
+    fgets(acc.type, sizeof(acc.type), fp);
+    acc.type[strcspn(acc.type,"\n")]='\0';
+
     fclose(fp);
     return acc;
 }
@@ -154,6 +177,9 @@ struct account loadFromFile()
 void checkBalance(struct account acc)
 {
     printf("\nYour balance: Rs %.2f\n", acc.balance);
+    if (acc.balance < 1000)
+                printf("\n WARNING:Your balance is very low.Please deposit soon.\n");
+            
 }
 
 struct account depositMoney(struct account acc)
@@ -288,6 +314,9 @@ void resetAccount()
 {
     FILE *fp=fopen("account.txt","w");
     fprintf(fp,"Default User\n1234\n10000.00\n");
+    fprintf(fp, "State Bank of India\n");
+    fprintf(fp, "Dehradun Main Branch\n");
+    fprintf(fp, "Savings\n");
     fclose(fp);
     printf("Account reset successfully.\n");
 }
